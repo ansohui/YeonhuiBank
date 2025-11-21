@@ -1,5 +1,6 @@
 package com.db.bank.service;
 
+import com.db.bank.apiPayload.exception.LogException;
 import com.db.bank.domain.entity.Account;
 import com.db.bank.domain.entity.Log;
 import com.db.bank.domain.entity.Transaction;
@@ -32,6 +33,10 @@ public class LogService {
             Action action,
             User actorUser
     ) {
+        if (transaction == null || account == null || actorUser == null) {
+            throw new LogException.InvalidLogArgumentException("로그 기록을 위한 transaction/account/actorUser는 null일 수 없습니다.");
+        }
+
         Log log = Log.builder()
                 .transaction(transaction)
                 .account(account)
@@ -45,7 +50,6 @@ public class LogService {
         logRepository.save(log);
 
     }
-
 
 
     //입금 로그 기록

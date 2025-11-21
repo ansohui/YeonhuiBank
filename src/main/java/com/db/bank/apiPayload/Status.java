@@ -12,6 +12,8 @@ public enum Status {
     ACCOUNT_FORBIDDEN("403", "FAILURE", "접근 불가 계좌입니다."),
     ACCOUNT_ALREADY_PRESENT("409", "FAILURE", "이미 존재하는 계좌입니다."),
     ACCOUNT_NON_PRESENT("404", "FAILURE", "존재하지 않는 계좌입니다."),
+    //로그
+    INVALID_LOG_ARGUMENT("404", "FAILURE", "로그 기록을 위한 transaction/account/actorUser는 null일 수 없습니다."),
     //사용자
     USER_NON_PRESENT("404", "FAILURE", "존재하지 않는 사용자입니다.");
     private final String code;

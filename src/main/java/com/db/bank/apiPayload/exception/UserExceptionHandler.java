@@ -5,7 +5,9 @@ import com.db.bank.apiPayload.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@RestControllerAdvice
 public class UserExceptionHandler{
     @ExceptionHandler(UserException.UserNonExistsException.class)
     public ResponseEntity<ApiResponse<?>> handleBucketListException(UserException.UserNonExistsException ex) {
