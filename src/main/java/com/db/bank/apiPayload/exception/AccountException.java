@@ -10,6 +10,16 @@ public class AccountException extends RuntimeException {
             super(message);
         }
     }
+    public static class AccountAlreadyExistsException extends AccountException{
+        public AccountAlreadyExistsException(String message) {
+            super(message);
+        }
+    }
+    public  static class UnauthorizedAccountAccessException extends AccountException{
+        public UnauthorizedAccountAccessException(String message){
+            super(message);
+        }
+    }
 
     
 }

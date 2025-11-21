@@ -1,6 +1,8 @@
 package com.db.bank.repository;
 
 import com.db.bank.domain.entity.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
@@ -21,7 +23,7 @@ public interface AccountRepository extends JpaRepository<Account, Long>  {
     List<Account> findAllByUserId(Long userId);
 
     // 4. 생성일 기준으로 정렬(마이페이지)
-    List<Account> findByUserIdOrderByCreatedAtDesc(Long userId);
+    Page<Account> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     // 5.유저 소유 계좌인지 검증
     Optional<Account> findByIdAndUserId(Long id, Long userId);
