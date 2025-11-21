@@ -19,7 +19,7 @@ public class AccountExceptionHandler {
     }
     @ExceptionHandler(AccountException.UnauthorizedAccountAccessException.class)
     public ResponseEntity<ApiResponse<?>> handleAccountException(AccountException.UnauthorizedAccountAccessException ex){
-        return new ResponseEntity<>(ApiResponse.onFailure(Status.UNAUTHORIZED_ACCOUNT), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.ACCOUNT_FORBIDDEN), HttpStatus.FORBIDDEN);
     }
 
 

@@ -97,7 +97,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     // ==== 5. 기간별 조회 ====
     // 1) 기간별 전체 거래 조회
-    Page<Transaction> findByCreatedAtBetweenOOrderByCreatedAtCreatedAtDesc(
+    Page<Transaction> findByCreatedAtBetweenOrderByCreatedAtDesc(
             LocalDateTime startDate,
             LocalDateTime endDate,
             Pageable pageable

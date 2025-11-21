@@ -13,13 +13,13 @@ import java.util.List;
 public interface ScheduledTransactionRepository extends JpaRepository<ScheduledTransaction, Long> {
 
     // 1. 특정 유저가 만든 예약이체 목록
-    Page<ScheduledTransaction> findByCreatedByIdOrderBOrderByCreatedAtDesc(
+    Page<ScheduledTransaction> findByCreatedByIdOrderByCreatedAtDesc(
             Long userId,
             Pageable pageable
     );
 
     // 2. 특정 계좌 기준 (출금 계좌가 본 계좌)
-    Page<ScheduledTransaction> findByFromAccountIdOrderBOrderByCreatedAtDesc(
+    Page<ScheduledTransaction> findByFromAccountIdOrderByCreatedAtDesc(
             Long fromAccountId,
             Pageable pageable
     );
@@ -53,7 +53,7 @@ public interface ScheduledTransactionRepository extends JpaRepository<ScheduledT
     );
 
     // 7. 중복 체크
-    boolean existsByFromAccountAndToAccountAndStatus(
+    boolean existsByFromAccountIdAndToAccountIdAndStatus(
             Long fromAccountId,
             Long toAccountId,
             Status status
