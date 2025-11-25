@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+import static com.db.bank.domain.enums.account.AccountType.EXTERNAL_IN;
+import static com.db.bank.domain.enums.account.AccountType.EXTERNAL_OUT;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
@@ -27,7 +30,15 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final LogService logService;
+    private Account getExternalInAccount() {
+        return accountRepository.findByAccountType(EXTERNAL_IN)
+                .orElseThrow(() -> new AccountException.AccountNonExistsException("EXTERNAL_IN 계좌가 없습니다."));
+    }
 
+    private Account getExternalOutAccount() {
+        return accountRepository.findByAccountType(EXTERNAL_OUT)
+                .orElseThrow(() -> new AccountException.AccountNonExistsException("EXTERNAL_OUT 계좌가 없습니다."));
+    }
     // ================== 1. 공통 유효성 체크 ==================
 
     private void validateAmount(BigDecimal amount) {
@@ -59,8 +70,7 @@ public class TransactionService {
         Account toAccount = accountRepository.findByAccountNumForUpdate(toAccountNum)
                 .orElseThrow(() -> new AccountException.AccountNonExistsException("입금 계좌를 찾을 수 없습니다. accountNum=" + toAccountNum));
 
-        Account externalInAccount = accountRepository.findExternalInAccount()
-                .orElseThrow(() -> new AccountException.AccountNonExistsException("EXTERNAL_IN 계좌가 없습니다."));
+        Account externalInAccount = getExternalInAccount();
 
         BigDecimal before = toAccount.getBalance();
         BigDecimal after = before.add(amount);
@@ -102,8 +112,7 @@ public class TransactionService {
 
         Account fromAccount = accountRepository.findByAccountNumForUpdate(fromAccountNum)
                 .orElseThrow(() -> new AccountException.AccountNonExistsException("출금 계좌를 찾을 수 없습니다. accountNum=" + fromAccountNum));
-        Account externalOutAccount = accountRepository.findExternalOutAccount()
-                .orElseThrow(() -> new AccountException("EXTERNAL_IN 계좌가 없습니다."));
+        Account externalOutAccount = getExternalOutAccount();
 
         // 소유자 검증
         if (!fromAccount.getUser().getId().equals(userId)) {
