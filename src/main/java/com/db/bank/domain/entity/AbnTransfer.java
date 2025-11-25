@@ -2,8 +2,17 @@ package com.db.bank.domain.entity;
 
 import com.db.bank.domain.enums.abnTransfer.RuleCode;
 import jakarta.persistence.*;
-
+import lombok.*;
 import java.time.LocalDateTime;
+
+
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Table(name = "abntransfer")
 
 public class AbnTransfer {
 
