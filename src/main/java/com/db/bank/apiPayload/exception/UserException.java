@@ -5,10 +5,14 @@ public class UserException extends RuntimeException {
         super(message);
     }
 
-    public static class UserNonExistsException extends AccountException{
+    public static class UserNonExistsException extends UserException{
         public UserNonExistsException(String message) {
             super(message);
         }
+    }
+
+    public static class InvalidLoginException extends UserException{
+        public InvalidLoginException(String message) { super(message); }
     }
 
 

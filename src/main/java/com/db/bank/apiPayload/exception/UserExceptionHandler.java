@@ -13,4 +13,10 @@ public class UserExceptionHandler{
     public ResponseEntity<ApiResponse<?>> handleBucketListException(UserException.UserNonExistsException ex) {
         return new ResponseEntity<>(ApiResponse.onFailure(Status.USER_NON_PRESENT), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(UserException.InvalidLoginException.class)
+    public ResponseEntity<ApiResponse<?>> handleInvalidLoginException(UserException.InvalidLoginException ex) {
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.INVALID_LOGIN), HttpStatus.UNAUTHORIZED);
+    }
+
 }
