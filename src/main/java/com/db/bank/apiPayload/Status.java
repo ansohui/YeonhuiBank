@@ -16,7 +16,8 @@ public enum Status {
     INVALID_ACCOUNT_AMOUNT("400", "FAILURE", "계좌 거래 금액이 유효하지 않습니다."),
     INVALID_ACCOUNT_ARGUMENT("400", "FAILURE", "계좌 요청 파라미터가 유효하지 않습니다."),
     INSUFFICIENT_BALANCE("409", "FAILURE", "계좌 잔액이 부족합니다."),
-
+    ACCOUNT_CREATE_SUCCESS("200","SUCCESS","계좌 생성을 완료했습니다."),
+    ACCOUNT_READ_SUCCESS("200","SUCCESS","해당 계좌를 불러왔습니다"),
     //예약 이체
     INVALID_SCHEDULED_TRANSACTION_AMOUNT("400", "FAILURE", "예약이체 금액은 0보다 커야 합니다."),
     INVALID_SCHEDULED_TRANSACTION_STARTDATE("400", "FAILURE", "예약이체 시작일은 필수입니다."),
@@ -31,6 +32,7 @@ public enum Status {
 
     //로그
     INVALID_LOG_ARGUMENT("404", "FAILURE", "로그 기록을 위한 transaction/account/actorUser는 null일 수 없습니다."),
+    LOG_READ_SUCCESS("200", "SUCCESS","로그 조회에 성공했습니다."),
     //사용자
     USER_NON_PRESENT("404", "FAILURE", "존재하지 않는 사용자입니다."),
     INVALID_LOGIN("401","FAILURE","아이디 또는 비밀번호가 일치하지 않습니다"),

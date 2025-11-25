@@ -1,6 +1,7 @@
 package com.db.bank.repository;
 
 import com.db.bank.domain.entity.Account;
+import com.db.bank.domain.enums.account.AccountType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -37,6 +38,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>  {
     @Query("select a from Account a where a.accountNum = :accountNum")
     Optional<Account> findByAccountNumForUpdate(String accountNum);
 
-    Optional<Account> findExternalInAccount();
-    Optional<Account> findExternalOutAccount();
+    Optional<Account> findByAccountType(AccountType accountType);
+
 }
