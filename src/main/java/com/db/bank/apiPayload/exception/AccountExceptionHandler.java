@@ -38,5 +38,10 @@ public class AccountExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiResponse.onFailure(Status.INSUFFICIENT_BALANCE));
     }
+    @ExceptionHandler(AccountException.InvalidAccountNumException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccountNumException(AccountException.InvalidAccountNumException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.onFailure(Status.INVALID_ACCOUNT_NUM));
+    }
 
 }

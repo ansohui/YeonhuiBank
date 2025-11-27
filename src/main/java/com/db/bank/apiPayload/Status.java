@@ -18,6 +18,7 @@ public enum Status {
     INSUFFICIENT_BALANCE("409", "FAILURE", "계좌 잔액이 부족합니다."),
     ACCOUNT_CREATE_SUCCESS("201","SUCCESS","계좌 생성을 완료했습니다."),
     ACCOUNT_READ_SUCCESS("200","SUCCESS","해당 계좌를 불러왔습니다"),
+    INVALID_ACCOUNT_NUM("400", "FAILURE", "계좌 번호가 유효하지 않습니다."),
     //예약 이체
     INVALID_SCHEDULED_TRANSACTION_AMOUNT("400", "FAILURE", "예약이체 금액은 0보다 커야 합니다."),
     INVALID_SCHEDULED_TRANSACTION_STARTDATE("400", "FAILURE", "예약이체 시작일은 필수입니다."),

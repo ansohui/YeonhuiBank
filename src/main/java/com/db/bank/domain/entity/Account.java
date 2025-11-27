@@ -2,7 +2,9 @@ package com.db.bank.domain.entity;
 
 
 import com.db.bank.domain.enums.account.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -24,6 +26,8 @@ public class Account {
 
     // 예: 123-456-789012
     @Column(nullable = false, unique = true, length = 30)
+    @Schema(description = "계좌번호 (숫자와 '-'만 사용 가능)", example = "123-456-789012")
+    @Pattern(regexp = "^[0-9-]+$", message = "계좌번호는 숫자와 '-'만 사용할 수 있습니다.")
     private String accountNum;
 
     // 계좌 잔액 최초 0

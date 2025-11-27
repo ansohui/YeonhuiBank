@@ -31,6 +31,9 @@ public class AccountException extends RuntimeException {
     public static class InsufficientBalanceException extends AccountException {
         public InsufficientBalanceException(String message) { super(message); }
     }
+    public static class InvalidAccountNumException extends AccountException {
+        public InvalidAccountNumException(String message) { super(message); }
+    }
 
 
     

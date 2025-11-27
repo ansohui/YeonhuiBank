@@ -37,6 +37,12 @@ public class AccountService {
         if (accountRepository.existsByAccountNum(accountNum)){
             throw new AccountException.AccountAlreadyExistsException("이미 존재하는 계좌번호 accountNum = "+accountNum);
         }
+        if (!accountNum.matches("^[0-9-]+$")) {
+            throw new AccountException.InvalidAccountNumException(
+                    "계좌번호는 숫자와 '-'만 허용됩니다. 입력값=" + accountNum
+            );
+        }
+
         Account account = Account.builder()
                 .accountNum(accountNum)
                 .accountType(accountType != null ? accountType : AccountType.NORMAL)
