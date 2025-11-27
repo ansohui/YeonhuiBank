@@ -2,11 +2,11 @@ package com.db.bank.service;
 
 import com.db.bank.apiPayload.exception.AccountException;
 import com.db.bank.apiPayload.exception.ScheduledTransactionException;
+import com.db.bank.apiPayload.exception.TransactionException;
 import com.db.bank.apiPayload.exception.UserException;
-import com.db.bank.domain.entity.Account;
-import com.db.bank.domain.entity.ScheduledTransaction;
-import com.db.bank.domain.entity.User;
+import com.db.bank.domain.entity.*;
 import com.db.bank.domain.enums.scheduledTransaction.Frequency;
+import com.db.bank.domain.enums.scheduledTransaction.RunResult;
 import com.db.bank.domain.enums.scheduledTransaction.ScheduledStatus;
 import com.db.bank.repository.AccountRepository;
 import com.db.bank.repository.ScheduledTransactionRepository;
@@ -31,6 +31,8 @@ public class ScheduledTransactionService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final TransactionService transactionService;
+    private final ScheduledTransferRunService scheduledTransferRunService;
+    private final TransferFailureReasonService failureReasonService;
     // ================== 1. 예약이체 생성 ==================
 
     @Transactional
@@ -89,6 +91,7 @@ public class ScheduledTransactionService {
                 .frequency(frequency)
                 .startDate(startDate)
                 .endDate(endDate)
+                .runTime(runTime)
                 .nextRunAt(firstRunAt)
                 .lastRunAt(null)
                 .memo(memo)
@@ -247,88 +250,98 @@ public class ScheduledTransactionService {
      */
     @Transactional
     public void runDueSchedules(LocalDateTime now) {
-        // ACTIVE + nextRunAt <= now 인 예약이체 중 최대 100개
+
+        // 1. 실행 대상 스케줄 조회 (예: ACTIVE + next_run_at <= now)
         List<ScheduledTransaction> dueList =
-                scheduledTransactionRepository.findTop100ByScheduledStatusAndNextRunAtLessThanEqualOrderByNextRunAtAsc(
+                scheduledTransactionRepository.findByScheduledStatusAndNextRunAtLessThanEqual(
                         ScheduledStatus.ACTIVE,
                         now
                 );
 
         for (ScheduledTransaction schedule : dueList) {
-            // startDate / endDate 범위 내인지 한 번 더 확인
-            LocalDate today = now.toLocalDate();
-            if (schedule.getStartDate() != null && today.isBefore(schedule.getStartDate())) {
-                continue;
-            }
-            if (schedule.getEndDate() != null && today.isAfter(schedule.getEndDate())) {
-                // 기간 넘었으면 COMPLETED 처리
-                schedule.setScheduledStatus(ScheduledStatus.COMPLETED);
-                schedule.setNextRunAt(null);
-                schedule.setUpdatedAt(now);
-                continue;
-            }
-
-
             try {
-                // 실제 이체 수행 (기존 TransactionService 재사용)
-                transactionService.transfer(
+                // 2. 실제 이체 수행
+                Transaction tx = transactionService.transfer(
                         schedule.getCreatedBy().getId(),
                         schedule.getFromAccount().getAccountNum(),
                         schedule.getToAccount().getAccountNum(),
                         schedule.getAmount(),
-                        "[예약이체] " + (schedule.getMemo() != null ? schedule.getMemo() : "")
+                        schedule.getMemo()
                 );
 
-                // 실행 시간 기록
+                // 3. 성공 로그 기록 (처음 실행 성공 케이스)
+                scheduledTransferRunService.recordSuccess(
+                        schedule,
+                        tx,
+                        null,
+                        "예약이체 성공"
+                );
+
+                // 4. nextRunAt 갱신 (네가 만든 next 실행 시간 계산 로직 사용)
                 schedule.setLastRunAt(now);
-
-                // 다음 실행 시간 계산
-                LocalDateTime nextRun = recalculateNextRunAt(schedule);
-
-                // 다음 실행 시간이 없거나(endDate 이후 등) 더 이상 기간을 넘으면 완료 처리
-                if (nextRun == null ||
-                        (schedule.getEndDate() != null && nextRun.toLocalDate().isAfter(schedule.getEndDate()))) {
-                    schedule.setScheduledStatus(ScheduledStatus.COMPLETED);
-                    schedule.setNextRunAt(null);
-                } else {
-                    schedule.setNextRunAt(nextRun);
-                }
-
-                schedule.setUpdatedAt(now);
+                schedule.setNextRunAt(recalculateNextRunAt(schedule));
 
             } catch (Exception e) {
-                schedule.setScheduledStatus(ScheduledStatus.FAILED);
-                schedule.setLastRunAt(now);
+                // 5. 처음 실패도 여기서 로그 남김 ✅
 
-                // 재시도 전략 1: 다음날 같은 시간에 재시도
-                LocalDateTime retryAt = now.plusDays(1);
+                // (1) 재시도 횟수/시간 설정
+                int retryNo = 0;                 // 처음 실패이므로 0
+                int maxRetries = 3;              // 정책에 맞게 변경 가능
+                LocalDateTime nextRetryAt = now.plusMinutes(10);
 
-                // 만약 endDate 넘으면 재시도 X → COMPLETED 처리
-                if (schedule.getEndDate() != null && retryAt.toLocalDate().isAfter(schedule.getEndDate())) {
-                    schedule.setScheduledStatus(ScheduledStatus.COMPLETED);
-                    schedule.setNextRunAt(null);
+                // (2) 실패사유 매핑
+                TransferFailureReason reason;
+                if (e instanceof TransactionException.InsufficientFundsException) {
+                    reason = failureReasonService.getReason("INSUFFICIENT_FUNDS");
+                } else if (e instanceof TransactionException.AccountLockedException) {
+                    reason = failureReasonService.getReason("ACCOUNT_LOCKED");
+                } else if (e instanceof TransactionException.DailyLimitExceededException) {
+                    reason = failureReasonService.getReason("DAILY_LIMIT_EXCEEDED");
                 } else {
-                    // 재시도 시간 지정
-                    schedule.setNextRunAt(retryAt);
+                    reason = failureReasonService.getReason("RETRY_FAILED");
                 }
 
-                schedule.setUpdatedAt(now);
+                // (3) 실패 로그 기록 (처음 실패 기록!) ✅
+                scheduledTransferRunService.recordFailure(
+                        schedule,
+                        null,                   // tx 없으니까 null
+                        null,
+                        RunResult.ERROR,
+                        "예약이체 실패: " + e.getMessage(),
+                        reason,
+                        retryNo,
+                        maxRetries,
+                        nextRetryAt
+                );
+
+                // (4) 스케줄 상태는 계속 ACTIVE 유지 or 일단 ACTIVE 유지 후 재시도
+                schedule.setLastRunAt(now);
+                schedule.setNextRunAt(nextRetryAt);
             }
         }
     }
-        
+
+
 
 
     // ================== 5. nextRunAt 계산 헬퍼 ==================
 
+
     private LocalDateTime recalculateNextRunAt(ScheduledTransaction schedule) {
-        // lastRunAt가 있으면 그 기준으로, 없으면 startDate 기준으로 계산
+        // lastRunAt가 있으면 그 기준으로, 없으면 startDate + runTime 기준
         LocalDateTime base = schedule.getLastRunAt();
         if (base == null) {
-            base = schedule.getStartDate().atTime(9, 0);
+            // ⭐ 하드코딩 9시 대신, 엔티티에 저장해 둔 runTime 사용
+            LocalTime runTime = schedule.getRunTime();
+            if (runTime == null) {
+                // 혹시 null이면 기본값은 09:00으로 (방어 코드)
+                runTime = LocalTime.of(9, 0);
+            }
+            base = LocalDateTime.of(schedule.getStartDate(), runTime);
         }
         return calculateNextRunAt(schedule.getFrequency(), schedule.getRrule(), base);
     }
+
     private LocalDateTime calculateNextRunAtCustom(String rrule, LocalDateTime base) {
         if (rrule == null || rrule.isBlank()) return null;
 

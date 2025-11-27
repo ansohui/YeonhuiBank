@@ -14,4 +14,8 @@ public class TransferFailureReasonExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleDuplicateReasonCodeException(TransferFailureReasonException.DuplicateReasonCodeException e) {
         return new ResponseEntity<>(ApiResponse.onFailure(Status.REASON_CODE_DUPLICATE), HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(TransferFailureReasonException.ReasonCodeNonExistsException.class)
+    public ResponseEntity<ApiResponse<?>> handleNonExistsReasonCodeException(TransferFailureReasonException.ReasonCodeNonExistsException e) {
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.REASON_CODE_NON_PRESENT), HttpStatus.NOT_FOUND);
+    }
 }

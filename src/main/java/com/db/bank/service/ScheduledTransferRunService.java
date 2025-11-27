@@ -3,6 +3,7 @@ package com.db.bank.service;
 import com.db.bank.domain.entity.ScheduledTransaction;
 import com.db.bank.domain.entity.ScheduledTransferRun;
 import com.db.bank.domain.entity.Transaction;
+import com.db.bank.domain.entity.TransferFailureReason;
 import com.db.bank.domain.enums.scheduledTransaction.RunResult;
 import com.db.bank.repository.ScheduledTransferRunRepository;
 import com.db.bank.repository.ScheduledTransactionRepository;
@@ -30,7 +31,7 @@ public class ScheduledTransferRunService {
             Transaction txnIn,
             RunResult result,
             String message,
-            String failureReasonCode,
+            TransferFailureReason failureReasonCode,
             int retryNo,
             int maxRetries,
             LocalDateTime nextRetryAt,
@@ -46,7 +47,7 @@ public class ScheduledTransferRunService {
                 .txnIn(txnIn)
                 .result(result)
                 .message(message)
-                .failureReasonCode(failureReasonCode)
+                .failureReason(failureReasonCode)
                 .retryNo(retryNo)
                 .maxRetries(maxRetries)
                 .nextRetryAt(nextRetryAt)
@@ -86,7 +87,7 @@ public class ScheduledTransferRunService {
             Transaction txnIn,
             RunResult result,
             String message,
-            String failureReasonCode,
+            TransferFailureReason failureReason,
             int retryNo,
             int maxRetries,
             LocalDateTime nextRetryAt
@@ -97,7 +98,7 @@ public class ScheduledTransferRunService {
                 txnIn,
                 result,
                 message,
-                failureReasonCode,
+                failureReason,
                 retryNo,
                 maxRetries,
                 nextRetryAt,
@@ -146,4 +147,5 @@ public class ScheduledTransferRunService {
     public List<ScheduledTransferRun> getRetryTargets(LocalDateTime now, int maxRetryCheck) {
         return runRepository.findByRetryNoLessThanAndNextRetryAtLessThanEqual(maxRetryCheck, now);
     }
+
 }

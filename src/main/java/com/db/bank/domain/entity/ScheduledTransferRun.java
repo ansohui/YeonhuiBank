@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -25,6 +26,10 @@ public class ScheduledTransferRun {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = false)
     private ScheduledTransaction schedule;
+
+    // 실행 시간(runTime) 저장
+    @Column(name = "run_time", nullable = false)
+    private LocalTime runTime;
 
     // 실행 시각
     @Column(name = "executed_at", nullable = false)
@@ -50,8 +55,9 @@ public class ScheduledTransferRun {
     private Transaction txnIn;
 
     // 사유 코드 (실패 코드 등)
-    @Column(name = "failure_reason_code", length = 30)
-    private String failureReasonCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "failure_reason_code") // FK 컬럼명
+    private TransferFailureReason failureReason;
 
     // 재시도 횟수 (기본값 0)
     @Column(name = "retry_no", nullable = false,

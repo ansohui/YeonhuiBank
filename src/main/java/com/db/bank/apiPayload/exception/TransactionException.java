@@ -10,4 +10,19 @@ public class TransactionException extends RuntimeException {
       super(message);
     }
   }
+  public static class InsufficientFundsException extends TransactionException {
+    public InsufficientFundsException(String message) {
+      super(message);
+    }
+  }
+  public static class AccountLockedException extends TransactionException {
+    public AccountLockedException(String message) {
+      super(message);
+    }
+  }
+  public static class DailyLimitExceededException extends TransactionException {
+    public DailyLimitExceededException(String message) {
+      super(message);
+    }
+  }
 }

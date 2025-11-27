@@ -11,4 +11,10 @@ public class TransferFailureReasonException extends RuntimeException {
           super("이미 존재하는 사유코드입니다: " + reasonCode);
       }
   }
+    public static class ReasonCodeNonExistsException extends TransferFailureReasonException {
+        public ReasonCodeNonExistsException(String reasonCode) {
+            super("이미 존재하는 사유코드입니다: " + reasonCode);
+        }
+    }
+
 }

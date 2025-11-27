@@ -31,7 +31,10 @@ public class TransferFailureReasonService {
     //사유코드로 단건 조회
     @Transactional(readOnly = true)
     public TransferFailureReason getReason(String reasonCode){
-        return transferFailureReasonRepository.findByReasonCode(reasonCode);
+        return transferFailureReasonRepository.findById(reasonCode)
+                .orElseThrow(() ->
+                        new TransferFailureReasonException.ReasonCodeNonExistsException("존재하지 않는 실패 사유 코드입니다. code=" + reasonCode));
     }
-
 }
+
+

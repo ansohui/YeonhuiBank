@@ -1,5 +1,6 @@
 package com.db.bank.app.dto;
 
+import com.db.bank.domain.entity.TransferFailureReason;
 import com.db.bank.domain.enums.scheduledTransaction.RunResult;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class ScheduledTransferRunDto {
         private Long txnOutId;
         private Long txnInId;
 
-        private String failureReasonCode;
+        private TransferFailureReason failureReason;
 
         private int retryNo;
         private int maxRetries;

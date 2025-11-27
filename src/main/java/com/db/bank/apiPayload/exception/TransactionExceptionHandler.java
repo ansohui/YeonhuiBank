@@ -15,5 +15,17 @@ public class TransactionExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleTransactionNonExists(TransactionException.TransactionNonExistsException ex) {
         return new ResponseEntity<>(ApiResponse.onFailure(Status.TRANSACTION_NON_PRESENT), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(TransactionException.InsufficientFundsException.class)
+    public ResponseEntity<ApiResponse<?>> handleInsufficientFundsException(TransactionException.InsufficientFundsException ex) {
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.TRANSACTION_NON_PRESENT), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(TransactionException.AccountLockedException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccountLockedException(TransactionException.AccountLockedException ex) {
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.TRANSACTION_NON_PRESENT), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(TransactionException.DailyLimitExceededException.class)
+    public ResponseEntity<ApiResponse<?>> handleDailyLimitExceededException(TransactionException.DailyLimitExceededException ex) {
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.TRANSACTION_NON_PRESENT), HttpStatus.NOT_FOUND);
+    }
 
 }

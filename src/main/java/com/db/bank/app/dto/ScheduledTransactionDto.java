@@ -31,6 +31,7 @@ public class ScheduledTransactionDto {
         private LocalTime runTime;
 
         private String rrule;
+
         private String memo;
     }
 

@@ -66,7 +66,7 @@ public class ScheduledTransferRunController {
                 .message(run.getMessage())
                 .txnOutId(run.getTxnOut() != null ? run.getTxnOut().getId() : null)
                 .txnInId(run.getTxnIn() != null ? run.getTxnIn().getId() : null)
-                .failureReasonCode(run.getFailureReasonCode())
+                .failureReason(run.getFailureReason())
                 .retryNo(run.getRetryNo())
                 .maxRetries(run.getMaxRetries())
                 .nextRetryAt(run.getNextRetryAt())
