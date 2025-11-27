@@ -10,6 +10,11 @@ public class UserException extends RuntimeException {
             super(message);
         }
     }
+    public static class UserAlreadyExistsException extends UserException{
+        public UserAlreadyExistsException(String message) {
+            super(message);
+        }
+    }
 
     public static class InvalidLoginException extends UserException{
         public InvalidLoginException(String message) { super(message); }

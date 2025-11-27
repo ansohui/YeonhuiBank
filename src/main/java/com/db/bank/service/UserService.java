@@ -17,7 +17,7 @@ public class UserService {
     public User createUser(String userId, String password, String name){
         //우선 pw String
         if(userRepository.existsByUserId(userId)){
-            throw new UserException.UserNonExistsException("이미 존재하는 아이디: userId");
+            throw new UserException.UserAlreadyExistsException("이미 존재하는 아이디: "+userId);
         }
         User user=User.builder()
                 .userId(userId)
@@ -36,9 +36,21 @@ public class UserService {
 
     //회원가입 아이디 중복체크
     @Transactional(readOnly = true)
-    public boolean checkId(String userId){
-        return userRepository.existsByUserId(userId);
+    public boolean checkId(String userId) {
+
+        boolean exists = userRepository.existsByUserId(userId);
+
+        if (exists) {
+            throw new UserException.UserAlreadyExistsException(
+                    "이미 존재하는 아이디입니다: " + userId
+            );
+        }
+
+        return false; // 사용 가능
     }
+
+
+
 
     //아이디로 사용자 조회
     @Transactional(readOnly = true)

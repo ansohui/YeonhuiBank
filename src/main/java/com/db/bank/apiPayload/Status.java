@@ -41,6 +41,7 @@ public enum Status {
     //사용자
     USER_NON_PRESENT("404", "FAILURE", "존재하지 않는 사용자입니다."),
     USER_INVALID_LOGIN("401","FAILURE","아이디 또는 비밀번호가 일치하지 않습니다"),
+    USER_ALREADY_PRESENT("409", "FAILURE", "이미 존재하는 사용자입니다."),
     USER_SIGNUP_SUCCESS("201", "SUCCESS", "회원가입을 완료했습니다."),
     USER_LOGIN_SUCCESS("200", "SUCCESS", "로그인을 완료했습니다."),
     USER_CHECK_ID("200", "SUCCESS", "사용 가능한 아이디입니다."),
