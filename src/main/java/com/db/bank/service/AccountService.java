@@ -29,6 +29,9 @@ public class AccountService {
             String accountNum,
             AccountType accountType,
             BigDecimal initialBalance){
+        if (userId == null) {
+            throw new UserException.UserNonExistsException("userId가 null입니다. 요청 JSON에서 userId를 확인하세요.");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException.UserNonExistsException("사용자를 찾을 수 없습니다. id="+userId));
         if (accountRepository.existsByAccountNum(accountNum)){
