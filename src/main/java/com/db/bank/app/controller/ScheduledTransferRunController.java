@@ -6,6 +6,8 @@ import com.db.bank.app.dto.ScheduledTransferRunDto;
 import com.db.bank.domain.entity.ScheduledTransferRun;
 import com.db.bank.domain.enums.scheduledTransaction.RunResult;
 import com.db.bank.service.ScheduledTransferRunService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/scheduled-transfer-runs")
 @RequiredArgsConstructor
+@Tag(name = "⏰📋Scheduled Transfer Run (로그)", description = "예약 이체 로그 관련 API")
 public class ScheduledTransferRunController {
 
     private final ScheduledTransferRunService scheduledTransferRunService;
@@ -26,6 +29,7 @@ public class ScheduledTransferRunController {
      * 특정 결과만 보고 싶으면  - /api/scheduled-transfer-runs/schedule/{scheduleId}?result=SUCCESS
      */
     @GetMapping("/schedule/{scheduleId}")
+    @Operation(summary = "특정 예약이체의 실행 이력 조회(전체 혹은 특정 결과만)")
     public ApiResponse<List<ScheduledTransferRunDto.Response>> getRunsBySchedule(
             @PathVariable Long scheduleId,
             @RequestParam(required = false) RunResult result,

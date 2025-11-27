@@ -5,7 +5,9 @@ import com.db.bank.apiPayload.Status;
 import com.db.bank.app.dto.TransferLimitDto;
 import com.db.bank.domain.entity.TransferLimit;
 import com.db.bank.service.TransferLimitService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/transfer-limits")
 @RequiredArgsConstructor
+@Tag(name = "⛔️Transfer Limit", description = "이체한도 관련 API")
 public class TransferLimitController {
 
     private final TransferLimitService transferLimitService;
@@ -24,6 +27,7 @@ public class TransferLimitController {
     // POST /api/transfer-limits
     // ==========================
     @PostMapping
+    @Operation(summary = "이체한도 등록/변경")
     public ApiResponse<TransferLimitDto.Response> createOrUpdateLimit(
             @RequestBody TransferLimitDto.CreateRequest request
     ) {
@@ -45,6 +49,7 @@ public class TransferLimitController {
     // GET /api/transfer-limits/active/{accountNum}
     // ==========================
     @GetMapping("/active/{accountNum}")
+    @Operation(summary = "특정 계좌의 활성 이체한도 조회")
     public ApiResponse<List<TransferLimitDto.Response>> getActiveLimits(
             @PathVariable String accountNum
     ) {
@@ -65,6 +70,7 @@ public class TransferLimitController {
     // GET /api/transfer-limits/history/{accountNum}
     // ==========================
     @GetMapping("/history/{accountNum}")
+    @Operation(summary = "특정 계좌의 이체한도 이력(전체) 조회")
     public ApiResponse<List<TransferLimitDto.Response>> getHistory(
             @PathVariable String accountNum
     ) {
@@ -77,6 +83,19 @@ public class TransferLimitController {
         return ApiResponse.onSuccess(
                 Status.TRANSFER_LIMIT_HISTORY_READ_SUCCESS,
                 body
+        );
+    }
+    @PatchMapping("/{limitId}/end-date")
+    @Operation(summary = "endDate 수정 조회")
+    public ApiResponse<TransferLimitDto.Response> updateEndDate(
+            @PathVariable Long limitId,
+            @RequestBody TransferLimitDto.UpdateEndDateRequest request
+    ) {
+        TransferLimit limit = transferLimitService.updateEndDate(limitId, request.getEndDate());
+
+        return ApiResponse.onSuccess(
+                Status.TRANSFER_LIMIT_ENDDATE_UPDATE_SUCCESS,  // Status enum에 추가
+                toResponse(limit)
         );
     }
 
@@ -96,18 +115,6 @@ public class TransferLimitController {
                 .createdAt(limit.getCreatedAt())
                 .updatedAt(limit.getUpdatedAt())
                 .build();
-    }
-    @PatchMapping("/{limitId}/end-date")
-    public ApiResponse<TransferLimitDto.Response> updateEndDate(
-            @PathVariable Long limitId,
-            @RequestBody TransferLimitDto.UpdateEndDateRequest request
-    ) {
-        TransferLimit limit = transferLimitService.updateEndDate(limitId, request.getEndDate());
-
-        return ApiResponse.onSuccess(
-                Status.TRANSFER_LIMIT_ENDDATE_UPDATE_SUCCESS,  // Status enum에 추가
-                toResponse(limit)
-        );
     }
 
 

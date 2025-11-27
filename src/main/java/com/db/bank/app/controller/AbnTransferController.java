@@ -5,6 +5,8 @@ import com.db.bank.apiPayload.Status;
 import com.db.bank.app.dto.AbnTransferDto;
 import com.db.bank.domain.entity.AbnTransfer;
 import com.db.bank.service.AbnTransferService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/abn-transfers")
 @RequiredArgsConstructor
+@Tag(name = "🚨Abnormal Transfer🚨", description = "이상거래 탐지(AbnTransfer) API")
 public class AbnTransferController {
 
     private final AbnTransferService abnTransferService;
@@ -24,6 +27,7 @@ public class AbnTransferController {
     // GET /api/abn-transfers/account/{accountNum}
     // ==========================
     @GetMapping("/account/{accountNum}")
+    @Operation(summary = "계좌 기준 이상거래 목록 조회")
     public ApiResponse<List<AbnTransferDto.Response>> getAbnTransfersByAccount(
             @PathVariable String accountNum
     ) {
