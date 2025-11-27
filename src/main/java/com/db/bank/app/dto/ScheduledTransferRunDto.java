@@ -12,7 +12,7 @@ public class ScheduledTransferRunDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Response {
+    public static class ScheduledTransferRunResponse {
         private Long runId;
 
         private Long scheduleId;

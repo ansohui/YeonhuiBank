@@ -28,13 +28,13 @@ public class AbnTransferController {
     // ==========================
     @GetMapping("/account/{accountNum}")
     @Operation(summary = "계좌 기준 이상거래 목록 조회")
-    public ApiResponse<List<AbnTransferDto.Response>> getAbnTransfersByAccount(
+    public ApiResponse<List<AbnTransferDto.AbnTransferResponse>> getAbnTransfersByAccount(
             @PathVariable String accountNum
     ) {
         List<AbnTransfer> list =
                 abnTransferService.getAllAbnTransfersByAccount(accountNum);
 
-        List<AbnTransferDto.Response> body = list.stream()
+        List<AbnTransferDto.AbnTransferResponse> body = list.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
 
@@ -47,8 +47,8 @@ public class AbnTransferController {
     // ==========================
     // Entity -> DTO 변환
     // ==========================
-    private AbnTransferDto.Response toResponse(AbnTransfer abn) {
-        return AbnTransferDto.Response.builder()
+    private AbnTransferDto.AbnTransferResponse toResponse(AbnTransfer abn) {
+        return AbnTransferDto.AbnTransferResponse.builder()
                 .alertId(abn.getAlertId())
                 .transactionId(abn.getTransactionId().getId())
                 .accountNum(abn.getAccountNum().getAccountNum())

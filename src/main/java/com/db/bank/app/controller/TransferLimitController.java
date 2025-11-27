@@ -30,9 +30,9 @@ public class TransferLimitController {
     // ==========================
     @PostMapping
     @Operation(summary = "이체한도 등록/변경")
-    public ApiResponse<TransferLimitDto.Response> createOrUpdateLimit(
+    public ApiResponse<TransferLimitDto.TransferLimitResponse> createOrUpdateLimit(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody TransferLimitDto.CreateRequest request
+            @RequestBody TransferLimitDto.TransferLimitCreateRequest request
     ) {
         TransferLimit limit = transferLimitService.createTransferLimit(
                 user.getId(),                 // 토큰에서 가져온 유저
@@ -53,14 +53,14 @@ public class TransferLimitController {
     // ==========================
     @GetMapping("/active/{accountNum}")
     @Operation(summary = "특정 계좌의 활성 이체한도 조회")
-    public ApiResponse<List<TransferLimitDto.Response>> getActiveLimits(
+    public ApiResponse<List<TransferLimitDto.TransferLimitResponse>> getActiveLimits(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable String accountNum
     ) {
         List<TransferLimit> limits =
                 transferLimitService.getActiveTransferLimit(user.getId(), accountNum);
 
-        List<TransferLimitDto.Response> body = limits.stream()
+        List<TransferLimitDto.TransferLimitResponse> body = limits.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
 
@@ -75,14 +75,14 @@ public class TransferLimitController {
     // ==========================
     @GetMapping("/history/{accountNum}")
     @Operation(summary = "특정 계좌의 이체한도 이력(전체) 조회")
-    public ApiResponse<List<TransferLimitDto.Response>> getHistory(
+    public ApiResponse<List<TransferLimitDto.TransferLimitResponse>> getHistory(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable String accountNum
     ) {
         List<TransferLimit> limits =
                 transferLimitService.getPastTransferLimits(user.getId(), accountNum);
 
-        List<TransferLimitDto.Response> body = limits.stream()
+        List<TransferLimitDto.TransferLimitResponse> body = limits.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
 
@@ -97,10 +97,10 @@ public class TransferLimitController {
     // ==========================
     @PatchMapping("/{limitId}/end-date")
     @Operation(summary = "이체한도 endDate 수정")
-    public ApiResponse<TransferLimitDto.Response> updateEndDate(
+    public ApiResponse<TransferLimitDto.TransferLimitResponse> updateEndDate(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long limitId,
-            @RequestBody TransferLimitDto.UpdateEndDateRequest request
+            @RequestBody TransferLimitDto.TransferLimitUpdateEndDateRequest request
     ) {
         TransferLimit limit =
                 transferLimitService.updateEndDate(user.getId(), limitId, request.getEndDate());
@@ -114,8 +114,8 @@ public class TransferLimitController {
     // ==========================
     // Entity -> DTO 변환
     // ==========================
-    private TransferLimitDto.Response toResponse(TransferLimit limit) {
-        return TransferLimitDto.Response.builder()
+    private TransferLimitDto.TransferLimitResponse toResponse(TransferLimit limit) {
+        return TransferLimitDto.TransferLimitResponse.builder()
                 .limitId(limit.getId())
                 .accountNum(limit.getAccount().getAccountNum())
                 .dailyLimitAmt(limit.getDailyLimitAmt())

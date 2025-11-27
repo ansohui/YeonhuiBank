@@ -33,9 +33,9 @@ public class AccountController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping
     @Operation(summary = "계좌 생성")
-    public ApiResponse<AccountDto.CreateResponse> createAccount(
+    public ApiResponse<AccountDto.AccountCreateResponse> createAccount(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody AccountDto.CreateRequest request
+            @RequestBody AccountDto.AccountCreateRequest request
     ) {
         Account account = accountService.createAccount(
                 user.getId(),
@@ -44,7 +44,7 @@ public class AccountController {
                 request.getInitialBalance()
         );
 
-        AccountDto.CreateResponse response = AccountDto.CreateResponse.builder()
+        AccountDto.AccountCreateResponse response = AccountDto.AccountCreateResponse.builder()
                 .accountId(account.getId())
                 .accountNum(account.getAccountNum())
                 .accountType(account.getAccountType())
@@ -62,12 +62,12 @@ public class AccountController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/me")
     @Operation(summary = "특정 유저 계좌 목록 조회")
-    public ApiResponse<Page<AccountDto.DetailResponse>> getUserAccounts(
+    public ApiResponse<Page<AccountDto.AccountDetailResponse>> getUserAccounts(
             @AuthenticationPrincipal CustomUserDetails user,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<AccountDto.DetailResponse> response = accountService.getAccountsByUser(user.getId(), pageable)
-                .map(acc -> AccountDto.DetailResponse.builder()
+        Page<AccountDto.AccountDetailResponse> response = accountService.getAccountsByUser(user.getId(), pageable)
+                .map(acc -> AccountDto.AccountDetailResponse.builder()
                         .accountId(acc.getId())
                         .accountNum(acc.getAccountNum())
                         .accountType(acc.getAccountType())
@@ -86,13 +86,13 @@ public class AccountController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/{accountNum}")
     @Operation(summary = "단일 계좌 조회(소유자 검증)")
-    public ApiResponse<AccountDto.DetailResponse> getAccountDetail(
+    public ApiResponse<AccountDto.AccountDetailResponse> getAccountDetail(
             @PathVariable String accountNum,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         Account account = accountService.getAccountForUser(accountNum, user.getId());
 
-        AccountDto.DetailResponse response = AccountDto.DetailResponse.builder()
+        AccountDto.AccountDetailResponse response = AccountDto.AccountDetailResponse.builder()
                 .accountId(account.getId())
                 .accountNum(account.getAccountNum())
                 .accountType(account.getAccountType())

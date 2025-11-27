@@ -32,7 +32,7 @@ public class ScheduledTransferRunController {
      */
     @GetMapping("/schedule/{scheduleId}")
     @Operation(summary = "특정 예약이체의 실행 이력 조회(전체 혹은 특정 결과만)")
-    public ApiResponse<List<ScheduledTransferRunDto.Response>> getRunsBySchedule(
+    public ApiResponse<List<ScheduledTransferRunDto.ScheduledTransferRunResponse>> getRunsBySchedule(
             @PathVariable Long scheduleId,
             @RequestParam(required = false) RunResult result,
             @PageableDefault(sort = "executedAt", direction = Sort.Direction.ASC) Pageable pageable
@@ -47,7 +47,7 @@ public class ScheduledTransferRunController {
             runs = scheduledTransferRunService.getRunsByScheduleAndResult(scheduleId, result, pageable);
         }
 
-        List<ScheduledTransferRunDto.Response> body = runs.stream()
+        List<ScheduledTransferRunDto.ScheduledTransferRunResponse> body = runs.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
 
@@ -57,8 +57,8 @@ public class ScheduledTransferRunController {
     // ==========================
     // Entity → DTO 변환
     // ==========================
-    private ScheduledTransferRunDto.Response toResponse(ScheduledTransferRun run) {
-        return ScheduledTransferRunDto.Response.builder()
+    private ScheduledTransferRunDto.ScheduledTransferRunResponse toResponse(ScheduledTransferRun run) {
+        return ScheduledTransferRunDto.ScheduledTransferRunResponse.builder()
                 .runId(run.getId())
                 .scheduleId(run.getSchedule().getId())
                 .executedAt(run.getExecutedAt())

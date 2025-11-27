@@ -14,7 +14,7 @@ public class TransactionDto {
     // ================================
     @Getter @Setter
     @NoArgsConstructor @AllArgsConstructor @Builder
-    public static class CreateRequest {
+    public static class TransactionCreateRequest {
 
         private String fromAccountNum;   // 출금 계좌 (입금 시 ExternalIn 가능)
         private String toAccountNum;     // 입금 계좌 (출금 시 ExternalOut 가능)
@@ -28,7 +28,7 @@ public class TransactionDto {
     // ================================
     @Getter @Setter
     @NoArgsConstructor @AllArgsConstructor @Builder
-    public static class Response {
+    public static class TransactionResponse {
         private Long transactionId;
         private Long fromAccountId;
         private Long toAccountId;

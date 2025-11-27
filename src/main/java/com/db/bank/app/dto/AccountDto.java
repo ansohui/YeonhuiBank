@@ -2,6 +2,7 @@ package com.db.bank.app.dto;
 
 
 import com.db.bank.domain.enums.account.AccountType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,7 +15,7 @@ public class AccountDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateRequest {
+    public static class AccountCreateRequest {
 
         private String accountNum;
         private AccountType accountType;
@@ -25,7 +26,7 @@ public class AccountDto {
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class CreateResponse {
+    public static class AccountCreateResponse {
         private Long accountId;
         private String accountNum;
         private AccountType accountType;
@@ -38,7 +39,7 @@ public class AccountDto {
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class DetailResponse {
+    public static class AccountDetailResponse {
         private Long accountId;
         private String accountNum;
         private AccountType accountType;

@@ -35,9 +35,9 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping
     @Operation(summary = "예약이체 생성")
-    public ApiResponse<ScheduledTransactionDto.Response> create(
+    public ApiResponse<ScheduledTransactionDto.ScheduledTransactionResponse> create(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody ScheduledTransactionDto.CreateRequest req) {
+            @RequestBody ScheduledTransactionDto.ScheduledTransactionCreateRequest req) {
 
         ScheduledTransaction st = scheduledTransactionService.createSchedule(
                 user.getId(),
@@ -63,13 +63,13 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/my")
     @Operation(summary = "내가 만든 예약이체 목록")
-    public ApiResponse<Page<ScheduledTransactionDto.Response>> getMySchedules(
+    public ApiResponse<Page<ScheduledTransactionDto.ScheduledTransactionResponse>> getMySchedules(
             @AuthenticationPrincipal CustomUserDetails user,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<ScheduledTransaction> page = scheduledTransactionService.getMySchedules(user.getId(), pageable);
 
-        Page<ScheduledTransactionDto.Response> body = page.map(this::toResponse);
+        Page<ScheduledTransactionDto.ScheduledTransactionResponse> body = page.map(this::toResponse);
 
         return ApiResponse.onSuccess(Status.SCHEDULE_READ_SUCCESS, body);
     }
@@ -82,7 +82,7 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/my/status")
     @Operation(summary = "상태별 예약이체 조회")
-    public ApiResponse<Page<ScheduledTransactionDto.Response>> getMySchedulesByStatus(
+    public ApiResponse<Page<ScheduledTransactionDto.ScheduledTransactionResponse>> getMySchedulesByStatus(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam ScheduledStatus status,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
@@ -90,7 +90,7 @@ public class ScheduledTransactionController {
         Page<ScheduledTransaction> page = scheduledTransactionService
                 .getMySchedulesByStatus(user.getId(), status, pageable);
 
-        Page<ScheduledTransactionDto.Response> body = page.map(this::toResponse);
+        Page<ScheduledTransactionDto.ScheduledTransactionResponse> body = page.map(this::toResponse);
 
         return ApiResponse.onSuccess(Status.SCHEDULE_READ_SUCCESS, body);
     }
@@ -102,7 +102,7 @@ public class ScheduledTransactionController {
     // ====================================
     @GetMapping("/account/{fromAccountId}")
     @Operation(summary = "특정 출금 계좌 기준 예약 목록")
-    public ApiResponse<Page<ScheduledTransactionDto.Response>> getByFromAccount(
+    public ApiResponse<Page<ScheduledTransactionDto.ScheduledTransactionResponse>> getByFromAccount(
             @PathVariable Long fromAccountId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -124,7 +124,7 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/{scheduleId}")
     @Operation(summary = "예약 이체 단건 조회")
-    public ApiResponse<ScheduledTransactionDto.Response> detail(
+    public ApiResponse<ScheduledTransactionDto.ScheduledTransactionResponse> detail(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long scheduleId
     ) {
@@ -145,10 +145,10 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PatchMapping("/{scheduleId}")
     @Operation(summary = "예약 이체 수정")
-    public ApiResponse<ScheduledTransactionDto.Response> update(
+    public ApiResponse<ScheduledTransactionDto.ScheduledTransactionResponse> update(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long scheduleId,
-            @RequestBody ScheduledTransactionDto.UpdateRequest req
+            @RequestBody ScheduledTransactionDto.ScheduledTransactionUpdateRequest req
     ) {
         ScheduledTransaction st = scheduledTransactionService.updateSchedule(
                 user.getId(),
@@ -189,7 +189,7 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping("/{scheduleId}/pause")
     @Operation(summary = "예약 이체 일시 정지")
-    public ApiResponse<ScheduledTransactionDto.Response> pause(
+    public ApiResponse<ScheduledTransactionDto.ScheduledTransactionResponse> pause(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long scheduleId
     ) {
@@ -206,7 +206,7 @@ public class ScheduledTransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping("/{scheduleId}/resume")
     @Operation(summary = "예약 이체 재개")
-    public ApiResponse<ScheduledTransactionDto.Response> resume(
+    public ApiResponse<ScheduledTransactionDto.ScheduledTransactionResponse> resume(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long scheduleId
     ) {
@@ -220,8 +220,8 @@ public class ScheduledTransactionController {
     // ====================================
     // DTO 변환 메서드
     // ====================================
-    private ScheduledTransactionDto.Response toResponse(ScheduledTransaction st) {
-        return ScheduledTransactionDto.Response.builder()
+    private ScheduledTransactionDto.ScheduledTransactionResponse toResponse(ScheduledTransaction st) {
+        return ScheduledTransactionDto.ScheduledTransactionResponse.builder()
                 .scheduleId(st.getId())
                 .fromAccountId(st.getFromAccount().getId())
                 .toAccountId(st.getToAccount().getId())

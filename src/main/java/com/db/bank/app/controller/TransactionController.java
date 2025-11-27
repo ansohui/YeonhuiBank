@@ -30,9 +30,9 @@ public class TransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping("/deposit")
     @Operation(summary = "입금")
-    public ApiResponse<TransactionDto.Response> deposit(
+    public ApiResponse<TransactionDto.TransactionResponse> deposit(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody TransactionDto.CreateRequest req) {
+            @RequestBody TransactionDto.TransactionCreateRequest req) {
 
         Transaction tx = transactionService.deposit(
                 user.getId(),
@@ -52,9 +52,9 @@ public class TransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping("/withdraw")
     @Operation(summary = "출금")
-    public ApiResponse<TransactionDto.Response> withdraw(
+    public ApiResponse<TransactionDto.TransactionResponse> withdraw(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody TransactionDto.CreateRequest req) {
+            @RequestBody TransactionDto.TransactionCreateRequest req) {
 
         Transaction tx = transactionService.withdraw(
                 user.getId(),
@@ -75,9 +75,9 @@ public class TransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @PostMapping("/transfer")
     @Operation(summary = "이체")
-    public ApiResponse<TransactionDto.Response> transfer(
+    public ApiResponse<TransactionDto.TransactionResponse> transfer(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody TransactionDto.CreateRequest req) {
+            @RequestBody TransactionDto.TransactionCreateRequest req) {
 
         Transaction tx = transactionService.transfer(
                 user.getId(),
@@ -99,14 +99,14 @@ public class TransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/sent")
     @Operation(summary = "내가 보낸 거래 조회")
-    public ApiResponse<Page<TransactionDto.Response>> getSent(
+    public ApiResponse<Page<TransactionDto.TransactionResponse>> getSent(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam Long fromAccountId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Transaction> page = transactionService.getSentTransactions(user.getId(), fromAccountId, pageable);
 
-        Page<TransactionDto.Response> body = page.map(this::toResponse);
+        Page<TransactionDto.TransactionResponse> body = page.map(this::toResponse);
         return ApiResponse.onSuccess(Status.TRANSACTION_READ_SUCCESS, body);
     }
 
@@ -117,14 +117,14 @@ public class TransactionController {
     @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/received")
     @Operation(summary = "내가 받은 거래 조회")
-    public ApiResponse<Page<TransactionDto.Response>> getReceived(
+    public ApiResponse<Page<TransactionDto.TransactionResponse>> getReceived(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam Long toAccountId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Transaction> page = transactionService.getReceivedTransactions(user.getId(), toAccountId, pageable);
 
-        Page<TransactionDto.Response> body = page.map(this::toResponse);
+        Page<TransactionDto.TransactionResponse> body = page.map(this::toResponse);
         return ApiResponse.onSuccess(Status.TRANSACTION_READ_SUCCESS, body);
     }
 
@@ -132,8 +132,8 @@ public class TransactionController {
     // ======================================
     // 내부 변환 메서드
     // ======================================
-    private TransactionDto.Response toResponse(Transaction tx) {
-        return TransactionDto.Response.builder()
+    private TransactionDto.TransactionResponse toResponse(Transaction tx) {
+        return TransactionDto.TransactionResponse.builder()
                 .transactionId(tx.getId())
                 .fromAccountId(tx.getFromAccount().getId())
                 .toAccountId(tx.getToAccount().getId())

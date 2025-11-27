@@ -13,7 +13,7 @@ public class AbnTransferDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class CreateRequest {
+    public static class AbnTransferCreateRequest {
         private Long transactionId;   // 대상 거래 ID
         private String accountNum;    // 이상거래 기준 계좌번호 (보낸 쪽 등)
         private RuleCode ruleCode;    // 룰 코드
@@ -26,7 +26,7 @@ public class AbnTransferDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Response {
+    public static class AbnTransferResponse {
         private Long alertId;
 
         private Long transactionId;

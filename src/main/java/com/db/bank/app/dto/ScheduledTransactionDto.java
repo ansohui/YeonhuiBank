@@ -2,6 +2,7 @@ package com.db.bank.app.dto;
 
 import com.db.bank.domain.enums.scheduledTransaction.Frequency;
 import com.db.bank.domain.enums.scheduledTransaction.ScheduledStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ public class ScheduledTransactionDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateRequest {
+    public static class ScheduledTransactionCreateRequest {
 
         private Long fromAccountId;
         private Long toAccountId;
@@ -40,7 +41,7 @@ public class ScheduledTransactionDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UpdateRequest {
+    public static class ScheduledTransactionUpdateRequest {
         private BigDecimal amount;
         private Frequency frequency;
         private LocalDate startDate;
@@ -55,7 +56,7 @@ public class ScheduledTransactionDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Response {
+    public static class ScheduledTransactionResponse {
         private Long scheduleId;
 
         private Long fromAccountId;
