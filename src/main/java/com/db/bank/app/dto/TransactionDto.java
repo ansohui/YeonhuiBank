@@ -21,6 +21,22 @@ public class TransactionDto {
         private BigDecimal amount;
         private String memo;
     }
+    @Getter @Setter
+    @NoArgsConstructor @AllArgsConstructor @Builder
+    public static class DepositCreateRequest {
+
+        private String toAccountNum;     // 입금 계좌 (출금 시 ExternalOut 가능)
+        private BigDecimal amount;
+        private String memo;
+    }
+    @Getter @Setter
+    @NoArgsConstructor @AllArgsConstructor @Builder
+    public static class WithdrawCreateRequest {
+
+        private String fromAccountNum;   // 출금 계좌 (입금 시 ExternalIn 가능)
+        private BigDecimal amount;
+        private String memo;
+    }
 
 
     // ================================

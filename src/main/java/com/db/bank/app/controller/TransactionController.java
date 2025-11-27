@@ -32,7 +32,7 @@ public class TransactionController {
     @Operation(summary = "입금")
     public ApiResponse<TransactionDto.TransactionResponse> deposit(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody TransactionDto.TransactionCreateRequest req) {
+            @RequestBody TransactionDto.DepositCreateRequest req) {
 
         Transaction tx = transactionService.deposit(
                 user.getId(),
@@ -54,7 +54,7 @@ public class TransactionController {
     @Operation(summary = "출금")
     public ApiResponse<TransactionDto.TransactionResponse> withdraw(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestBody TransactionDto.TransactionCreateRequest req) {
+            @RequestBody TransactionDto.WithdrawCreateRequest req) {
 
         Transaction tx = transactionService.withdraw(
                 user.getId(),

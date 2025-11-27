@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      mode: always
+      mode: never
       schema-locations: classpath:schema.sql
 
 
@@ -18,7 +18,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-
+    defer-datasource-initialization: true   # ⭐⭐ 이거 중요
 logging:
   level:
     org.hibernate.SQL: debug

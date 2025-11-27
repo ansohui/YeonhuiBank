@@ -1,3 +1,16 @@
+--  시스템 관리자 유저 생성
+INSERT INTO user (login_id, password, name, created_at)
+VALUES ('system_admin', '$2a$10$LwVbR.ME7xZP5m1kU1Zl5OUYkdqN2b8lQlaeQxPz2GjXQmclA6mB6', '시스템관리자', NOW());
+
+
+--  시스템 입금 전용 계좌
+INSERT INTO account (account_num, balance, account_type, created_at, user_id)
+VALUES ('999-000', 0, 'EXTERNAL_IN', NOW(), 1);
+
+--  시스템 출금 전용 계좌
+INSERT INTO account (account_num, balance, account_type, created_at, user_id)
+VALUES ('999-111', 0, 'EXTERNAL_OUT', NOW(), 1);
+
 -- check
 ALTER TABLE account
     ADD CONSTRAINT chk_account_num_format
@@ -31,7 +44,7 @@ ALTER TABLE `SCHEDULED_TRANSFER_RUN`
     ADD CONSTRAINT chk_run_retry_range
         CHECK (`retry_no` IS NULL OR `retry_no` <= `max_retries`);
 
-CREATE INDEX ix_account_user     ON `Account`(`login_id`);
+CREATE INDEX ix_account_user     ON `Account`(`user_id`);
 CREATE INDEX ix_tx_from_time     ON `transaction`(`from_account_num`,`created_at`);
 CREATE INDEX ix_tx_to_time       ON `transaction`(`to_account_num`,`created_at`);
 CREATE INDEX ix_log_acc_time     ON `log`(`account_num`,`created_at`);
