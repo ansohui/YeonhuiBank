@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -64,6 +65,7 @@ public class AccountController {
     @Operation(summary = "특정 유저 계좌 목록 조회")
     public ApiResponse<Page<AccountDto.AccountDetailResponse>> getUserAccounts(
             @AuthenticationPrincipal CustomUserDetails user,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<AccountDto.AccountDetailResponse> response = accountService.getAccountsByUser(user.getId(), pageable)

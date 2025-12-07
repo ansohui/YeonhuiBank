@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -78,6 +79,7 @@ public class ScheduledTransactionController {
     @Operation(summary = "내가 만든 예약이체 목록")
     public ApiResponse<Page<ScheduledTransactionDto.ScheduledTransactionResponse>> getMySchedules(
             @AuthenticationPrincipal CustomUserDetails user,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<ScheduledTransaction> page = scheduledTransactionService.getMySchedules(user.getId(), pageable);
@@ -98,6 +100,7 @@ public class ScheduledTransactionController {
     public ApiResponse<Page<ScheduledTransactionDto.ScheduledTransactionResponse>> getMySchedulesByStatus(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam ScheduledStatus status,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<ScheduledTransaction> page = scheduledTransactionService
@@ -117,6 +120,7 @@ public class ScheduledTransactionController {
     @Operation(summary = "특정 출금 계좌 기준 예약 목록")
     public ApiResponse<Page<ScheduledTransactionDto.ScheduledTransactionResponse>> getByFromAccount(
             @PathVariable Long fromAccountId,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<ScheduledTransaction> page =

@@ -9,6 +9,7 @@ import com.db.bank.service.ScheduledTransferRunService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -35,6 +36,7 @@ public class ScheduledTransferRunController {
     public ApiResponse<List<ScheduledTransferRunDto.ScheduledTransferRunResponse>> getRunsBySchedule(
             @PathVariable Long scheduleId,
             @RequestParam(required = false) RunResult result,
+            @ParameterObject
             @PageableDefault(sort = "executedAt", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         List<ScheduledTransferRun> runs;

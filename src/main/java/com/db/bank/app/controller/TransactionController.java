@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -102,6 +103,7 @@ public class TransactionController {
     public ApiResponse<Page<TransactionDto.TransactionResponse>> getSent(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam Long fromAccountId,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Transaction> page = transactionService.getSentTransactions(user.getId(), fromAccountId, pageable);
@@ -120,6 +122,7 @@ public class TransactionController {
     public ApiResponse<Page<TransactionDto.TransactionResponse>> getReceived(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam Long toAccountId,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Transaction> page = transactionService.getReceivedTransactions(user.getId(), toAccountId, pageable);

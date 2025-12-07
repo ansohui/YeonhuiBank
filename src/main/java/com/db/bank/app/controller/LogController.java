@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,6 +35,7 @@ public class LogController {
     @Operation(summary = "계좌 별 로그 조회")
     public ApiResponse<Page<LogDto.LogResponse>> getLogsByAccount(
             @PathVariable String accountNum,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Log> logs = logService.getLogsByAccount(accountNum, pageable);
@@ -49,6 +51,7 @@ public class LogController {
     @Operation(summary = "사용자 별 로그 조회 (본인)")
     public ApiResponse<Page<LogDto.LogResponse>> getLogsByActorUser(
             @AuthenticationPrincipal CustomUserDetails principal,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Long userId = principal.getUserId();
@@ -71,6 +74,7 @@ public class LogController {
             @RequestParam("end")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             LocalDateTime end,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Log> logs = logService.getLogsByAccountAndPeriod(accountNum, start, end, pageable);
@@ -87,6 +91,7 @@ public class LogController {
     @Operation(summary = "액션 타입별 로그 조회")
     public ApiResponse<Page<LogDto.LogResponse>> getLogsByAction(
             @PathVariable Action action,
+            @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Log> logs = logService.getLogsByAction(action, pageable);
