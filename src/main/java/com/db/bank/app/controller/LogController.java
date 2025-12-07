@@ -46,11 +46,12 @@ public class LogController {
     //사용자 별 로그 조회
 
     @GetMapping("/me")
-    @Operation(summary = "사용자 별 로그 조회")
+    @Operation(summary = "사용자 별 로그 조회 (본인)")
     public ApiResponse<Page<LogDto.LogResponse>> getLogsByActorUser(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
+        Long userId = principal.getUserId();
         Page<Log> logs = logService.getLogsByActorUser(userId, pageable);
 
         Page<LogDto.LogResponse> body = logs.map(this::toLogResponse);

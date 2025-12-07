@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
+
     private final Long id;          // PK
     private final String username;  // 로그인 아이디
     private final String password;
@@ -33,4 +34,7 @@ public class CustomUserDetails implements UserDetails {
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
+
+    public Long getUserId() { return id; }
+
 }
