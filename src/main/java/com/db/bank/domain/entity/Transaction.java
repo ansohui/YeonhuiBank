@@ -24,11 +24,11 @@ public class Transaction {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_account_num", nullable = false)
+    @JoinColumn(name = "from_account_num", referencedColumnName = "account_num", nullable = false)
     private Account fromAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_account_num", nullable = false)
+    @JoinColumn(name = "to_account_num", referencedColumnName = "account_num", nullable = false)
     private Account toAccount;
 
     // 거래 타입: 입금/출금/이체/수수료

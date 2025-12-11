@@ -22,7 +22,7 @@ public class TransferLimit {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="account_num", nullable = false)
+    @JoinColumn(name = "account_num", referencedColumnName = "account_num", nullable = false)
     private Account account;
 
     @Column(name = "daily_limit_amt", nullable = true, precision = 18, scale = 2)

@@ -27,7 +27,7 @@ public class Log {
     private Transaction transaction;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_num", nullable = false)
+    @JoinColumn(name = "account_num", referencedColumnName = "account_num", nullable = false)
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)

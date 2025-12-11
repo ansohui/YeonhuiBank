@@ -25,7 +25,7 @@ public class Account {
     private Long id;
 
     // 예: 123-456-789012
-    @Column(nullable = false, unique = true, length = 30)
+    @Column(name = "account_num", nullable = false, unique = true, length = 30)
     @Schema(description = "계좌번호 (숫자와 '-'만 사용 가능)", example = "123-456-789012")
     @Pattern(regexp = "^[0-9-]+$", message = "계좌번호는 숫자와 '-'만 사용할 수 있습니다.")
     private String accountNum;
