@@ -25,4 +25,10 @@ public class TransactionException extends RuntimeException {
       super(message);
     }
   }
+  public static class IllegalTransferException extends TransactionException {
+    public IllegalTransferException(String message) {
+      super(message);
+    }
+  }
+
 }

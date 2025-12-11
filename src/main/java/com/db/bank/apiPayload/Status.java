@@ -54,7 +54,8 @@ public enum Status {
     TRANSACTION_NON_PRESENT ("404", "FAILURE", "존재하지 않는 트랜잭션 입니다."),
     TRANSACTION_CREATE_SUCCESS("201","SUCCESS","거래 생성을 성공하였습니다."),
     TRANSACTION_READ_SUCCESS("200", "SUCCESS","거래 조회를 성공하였습니다."),
-
+    LIMIT_EXCEEDED_DAILY("409", "FAILURE", "일일 이체한도를 초과했습니다."),
+    TRANSFER_LIMIT_EXCEEDED("409", "FAILURE", "이체한도를 초과했습니다."),
     //사유코드
     REASON_CODE_DUPLICATE("409", "FAILURE", "중복된 사유코드입니다."),
     REASON_CREATE_SUCCESS("201", "SUCCESS", "사유코드 생성을 성공하였습니다."),

@@ -25,7 +25,12 @@ public class TransactionExceptionHandler {
     }
     @ExceptionHandler(TransactionException.DailyLimitExceededException.class)
     public ResponseEntity<ApiResponse<?>> handleDailyLimitExceededException(TransactionException.DailyLimitExceededException ex) {
-        return new ResponseEntity<>(ApiResponse.onFailure(Status.TRANSACTION_NON_PRESENT), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.LIMIT_EXCEEDED_DAILY), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(TransactionException.IllegalTransferException.class)
+    public ResponseEntity<ApiResponse<?>> handleDailyLimitExceededException(TransactionException.IllegalTransferException ex) {
+        return new ResponseEntity<>(ApiResponse.onFailure(Status.TRANSFER_LIMIT_EXCEEDED), HttpStatus.NOT_FOUND);
+    }
+
 
 }

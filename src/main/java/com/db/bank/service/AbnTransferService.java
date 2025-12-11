@@ -51,6 +51,54 @@ public class AbnTransferService {
 
     }
 
+    @Transactional
+    public void preCheckAbnTransfer(Account from, Account to, BigDecimal amount) {
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime ago10 = now.minusMinutes(10);
+
+        // 1. 최근 동일 거래 3건 이상
+        Long count = transactionRepository.sameTransfer(
+                from.getAccountNum(),
+                to.getAccountNum(),
+                amount,
+                ago10
+        );
+        if (count >= 3) {
+            createAbnTransfer(null, from.getAccountNum(), RuleCode.MULTI_TRANSFER_SAME_ACCOUNT, "10분내 동일거래 3건 이상");
+        }
+
+        // 2. 일일 한도 초과
+        BigDecimal today = transactionRepository.getTotalTransferredToday(
+                from.getAccountNum(),
+                now.toLocalDate().atStartOfDay(),
+                now
+        );
+
+        //오늘 이체 내역이 없으면 null → 0원으로 처리
+        if (today == null) {
+            today = BigDecimal.ZERO;
+        }
+
+        Optional<TransferLimit> limitOpt =
+                transferLimitRepository.findOneByAccountAndStatus(from, TransferStatus.ACTIVE);
+
+        if (limitOpt.isPresent()
+                && today.add(amount).compareTo(limitOpt.get().getDailyLimitAmt()) > 0) {
+
+            throw new TransactionException.IllegalTransferException("일일 이체 한도 초과");
+        }
+
+        // 3. 처음 보내는 수취인
+        if (transactionRepository.countHistoryBetweenAccounts(
+                from.getAccountNum(),
+                to.getAccountNum()
+        ) == 0) {
+            createAbnTransfer(null, from.getAccountNum(), RuleCode.NEW_RECEIVER, "처음 보내는 수취인 계좌");
+        }
+    }
+
+
     //계좌번호로 이상거래 가져오기
     @Transactional(readOnly = true)
     public List<AbnTransfer> getAllAbnTransfersByAccount(String accountNum) {

@@ -183,6 +183,7 @@ public class TransactionService {
         if (fromBefore.compareTo(amount) < 0) {
             throw new AccountException.InsufficientBalanceException("잔액이 부족합니다.");
         }
+        abnTransferService.preCheckAbnTransfer(fromAccount, toAccount, amount);
 
         BigDecimal toBefore = toAccount.getBalance();
 
