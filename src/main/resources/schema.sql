@@ -48,7 +48,7 @@ ALTER TABLE `transfer_limit`
     ADD CONSTRAINT chk_limit_date_range
         CHECK (`end_date` IS NULL OR `end_date` >= `start_date`);
 
-ALTER TABLE `SCHEDULED_TRANSFER_RUN`
+ALTER TABLE `scheduled_transfer_run`
     ADD CONSTRAINT chk_run_retry_range
         CHECK (`retry_no` IS NULL OR `retry_no` <= `max_retries`);
 
@@ -69,36 +69,89 @@ CREATE INDEX ix_atl_acc_time ON abntransfer (account_num, created_at);
 CREATE INDEX ix_tx_status_time ON `transaction`(`status`,`created_at`);
 CREATE INDEX ix_run_result_time ON `SCHEDULED_TRANSFER_RUN`(`result`,`executed_at`);
 
--- trigger
--- amount > 0, from/to NULL 체크, 동일계좌 금지 밑의 트리거는 mysql 에서 직접 한 번 실행
--- USE bank_db;
--- DELIMITER $$
---
--- CREATE TRIGGER trg_tx_before_insert
---     BEFORE INSERT ON `transaction`
---     FOR EACH ROW
--- BEGIN
---     IF NEW.from_account_num IS NULL OR NEW.to_account_num IS NULL THEN
---         SIGNAL SQLSTATE '45000'
---             SET MESSAGE_TEXT = '입출금 계좌는 NULL일 수 없습니다.';
--- END IF;
---
--- IF NEW.amount <= 0 THEN
---         SIGNAL SQLSTATE '45000'
---             SET MESSAGE_TEXT = '이체 금액은 0보다 커야 합니다.';
--- END IF;
---
---     IF NEW.from_account_num IS NOT NULL
---        AND NEW.to_account_num IS NOT NULL
---        AND NEW.from_account_num = NEW.to_account_num THEN
---         SIGNAL SQLSTATE '45000'
---             SET MESSAGE_TEXT = '출금/입금 계좌는 서로 달라야 합니다.';
--- END IF;
--- END$$
---
--- DELIMITER ;
+--trigger
+--계좌생성 트리거
+--amount > 0, from/to NULL 체크, 동일계좌 금지 밑의 트리거는 mysql 에서 직접 한 번 실행
+USE bank_db;
+DELIMITER $$
+
+CREATE TRIGGER trg_tx_before_insert
+    BEFORE INSERT ON `transaction`
+    FOR EACH ROW
+BEGIN
+    IF NEW.from_account_num IS NULL OR NEW.to_account_num IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '입출금 계좌는 NULL일 수 없습니다.';
+END IF;
+
+IF NEW.amount <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '이체 금액은 0보다 커야 합니다.';
+END IF;
+
+    IF NEW.from_account_num IS NOT NULL
+       AND NEW.to_account_num IS NOT NULL
+       AND NEW.from_account_num = NEW.to_account_num THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '출금/입금 계좌는 서로 달라야 합니다.';
+END IF;
+END$$
 
 
+--예약이체 생성 검증 트리거
+CREATE TRIGGER trg_sched_before_insert
+    BEFORE INSERT ON scheduled_transaction
+    FOR EACH ROW
+BEGIN
+    -- 금액 > 0
+    IF NEW.amount <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '예약이체 금액은 0보다 커야 합니다.';
+END IF;
+
+-- from/to NULL 방지
+IF NEW.from_account_id IS NULL OR NEW.to_account_id IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '출금/입금 계좌는 NULL일 수 없습니다.';
+END IF;
+
+    -- 동일 계좌 방지
+    IF NEW.from_account_id = NEW.to_account_id THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '출금/입금 계좌는 서로 달라야 합니다.';
+END IF;
+
+    -- 종료일 < 시작일 방지
+    IF NEW.end_date IS NOT NULL AND NEW.end_date < NEW.start_date THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '예약이체 종료일은 시작일보다 빠를 수 없습니다.';
+END IF;
+END$$
 
 
--- view
+--예약이체 수정 트리거
+CREATE TRIGGER trg_sched_before_update
+    BEFORE UPDATE ON scheduled_transaction
+    FOR EACH ROW
+BEGIN
+    -- 금액 > 0
+    IF NEW.amount <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '예약이체 금액은 0보다 커야 합니다.';
+END IF;
+
+-- 동일 계좌 방지
+IF NEW.from_account_id = NEW.to_account_id THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '출금/입금 계좌는 서로 달라야 합니다.';
+END IF;
+
+    -- 종료일 < 시작일 방지
+    IF NEW.end_date IS NOT NULL AND NEW.end_date < NEW.start_date THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '예약이체 종료일은 시작일보다 빠를 수 없습니다.';
+END IF;
+END$$
+
+
+DELIMITER ;
