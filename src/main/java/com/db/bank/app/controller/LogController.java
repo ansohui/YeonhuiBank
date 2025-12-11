@@ -46,7 +46,7 @@ public class LogController {
     }
 
     //사용자 별 로그 조회
-
+    @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/me")
     @Operation(summary = "사용자 별 로그 조회 (본인)")
     public ApiResponse<Page<LogDto.LogResponse>> getLogsByActorUser(
@@ -86,7 +86,7 @@ public class LogController {
 
 
     // 4) 액션 타입별 로그 조회 ex DEPOSIT
-
+    @SecurityRequirement(name = "BearerAuth")
     @GetMapping("/action/{action}")
     @Operation(summary = "액션 타입별 로그 조회")
     public ApiResponse<Page<LogDto.LogResponse>> getLogsByAction(
